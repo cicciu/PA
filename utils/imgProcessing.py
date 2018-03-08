@@ -6,52 +6,40 @@ import matplotlib.pyplot as plt
 
 
 def imgFilter(img):
-    imgray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) #transgorm rgb to gray levelb
-    imgBlur = cv2.medianBlur(imgray,5) #Remove salt and peper
-    th, img_thresh = cv2.threshold(imgBlur, 195, 255, cv2.THRESH_BINARY) #Treeshold of image
+    #transgorm rgb to gray levelb
+    imgray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) 
+    
+    #Remove salt and peper
+    imgBlur = cv2.medianBlur(imgray,5) 
+
+    #Treeshold of image
+    th, img_thresh = cv2.threshold(imgBlur, 190, 255, cv2.THRESH_BINARY) 
 
 
-    img_floodfill = img_thresh.copy()
-    
-    # Mask used to flood filling.
-    h, w = img_thresh.shape[:2]
-    mask = np.zeros((h+2, w+2), np.uint8)
-    
-    # Floodfill from point (0, 0)  all black in white start in 0,0
-    cv2.floodFill(img_floodfill, mask, (0,0), 255);
-    
-    # Invert floodfilled image (rect in white)
-    im_floodfill_inv = cv2.bitwise_not(img_floodfill)
-    
-    # Combine the two images to get the foreground
-    im_out = img_thresh | im_floodfill_inv
+    # detect edges
+    edged = cv2.Canny(img_thresh, 195, 255)
 
-    return img_thresh
+
+    # construct kernel 
+    kernel = np.ones((4,4),np.uint8)
+
+    # thicken the edges (dilation)
+    dilation = cv2.dilate(edged,kernel,iterations = 1)
+    
+    #apply a closing kernel to 'close' gaps between 'white'
+    closed = cv2.morphologyEx(dilation, cv2.MORPH_CLOSE, kernel)
+
+
+    return dilation
 
 def rectImg(img, li, col):
-        
-    # detect edges in the image
-    edged = cv2.Canny(img, 10, 250)
-
-
-    # construct and apply a closing kernel to 'close' gaps between 'white'
-    # pixels
-    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (7, 7))
-    closed = cv2.morphologyEx(edged, cv2.MORPH_CLOSE, kernel)
-
-
     # find contours (i.e. the 'outlines') in the image and initialize the
     # total number of books found
-    _ , contours, hierarchy = cv2.findContours(closed.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    _ , contours, hierarchy = cv2.findContours(img.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     total = 0
-
-
 
     rects = [cv2.boundingRect(cnt) for cnt in contours]
     rects = sorted(rects,key=lambda  x:x[1],reverse=True)
-
-
-
 
     #crate new image white
     newImg = np.ones((li, col))
