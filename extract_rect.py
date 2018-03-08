@@ -17,15 +17,15 @@ li = img.shape[0]
 col = img.shape[1]
 
 
-imgF = imgFilter(img)
+imgF = imgFilterCoutour(img)
 
 plt.imshow(imgF)
 plt.show()
 
 
-rectIm, rects = rectImg(imgF, li, col)
+rectIm, contoursR = rectImgDetect(imgF, li, col)
 
 plt.imshow(rectIm)
 plt.show()
 
-exportRects(img, rects, li, col, 5000)
+exportRects(img, contoursR, li, col, 10000, 100, 100)

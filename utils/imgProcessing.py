@@ -5,83 +5,75 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def imgFilter(img):
+def imgFilterCoutour(img):
     #transgorm rgb to gray levelb
     imgray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) 
-    
+
+
     #Remove salt and peper
-    imgBlur = cv2.medianBlur(imgray,5) 
+    imgBlur = cv2.medianBlur(imgray,5)
 
     #Treeshold of image
-    th, img_thresh = cv2.threshold(imgBlur, 190, 255, cv2.THRESH_BINARY) 
+    th, img_thresh = cv2.threshold(imgBlur, 180, 255, cv2.THRESH_BINARY) 
 
-
-    # detect edges
-    edged = cv2.Canny(img_thresh, 195, 255)
-
+    # detect edged
+    edged = cv2.Canny(img_thresh, 180, 255) #first:threshold 1 second:threshold2
 
     # construct kernel 
     kernel = np.ones((4,4),np.uint8)
-
-    # thicken the edges (dilation)
+    # thicken the edged (dilation)
     dilation = cv2.dilate(edged,kernel,iterations = 1)
-    
+
     #apply a closing kernel to 'close' gaps between 'white'
     closed = cv2.morphologyEx(dilation, cv2.MORPH_CLOSE, kernel)
 
+    return closed
 
-    return dilation
-
-def rectImg(img, li, col):
+def rectImgDetect(img, li, col):
     # find contours (i.e. the 'outlines') in the image and initialize the
     # total number of books found
     _ , contours, hierarchy = cv2.findContours(img.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    total = 0
-
-    rects = [cv2.boundingRect(cnt) for cnt in contours]
-    rects = sorted(rects,key=lambda  x:x[1],reverse=True)
 
     #crate new image white
     newImg = np.ones((li, col))
 
+    newContoursRect=[]
+    totalRectDetect = 0
     # loop over the contours
     for c in contours:
         # approximate the contour 
         peri = cv2.arcLength(c, True)
-        approx = cv2.approxPolyDP(c, 0.02 * peri, True)
+        approx = cv2.approxPolyDP(c, 0.04 * peri, True) #0.02 default (inclinaison)
         
         # if the approximated contour has four points, then assume that the
         # contour is a book -- a book is a rectangle and thus has four vertices
         if len(approx) == 4:
             cv2.drawContours(newImg, [approx], -1, (0, 255, 0), 4)
-            total += 1
-    return newImg, rects
+            newContoursRect.append(c)
+            totalRectDetect += 1
 
-def exportRects(img, rects, li, col, minArea):
-    i = -1
-    j = 1
-    y_old = li
-    x_old = col
+    return newImg, newContoursRect
+
+
+def exportRects(img, contours, li, col, minArea, minW, minH):
+    imgNum = 0
+    rects = [cv2.boundingRect(cnt) for cnt in contours]
+    rects = sorted(rects,key=lambda  x:x[1],reverse=True)
 
     for rect in rects:
         x,y,w,h = rect
         area = w*h
         #test if area is not small
-        if area > minArea:
-            if (y_old - y) > 200:
-                    i += 1
-                    y_old = y
+        if w > minW and h > minH and area > minArea:
+            x,y,w,h = rect
 
-            if abs(x_old - x) > 300:
-                x_old = x
-                x,y,w,h = rect
-
-                out = img[y+10:y+h-10,x+10:x+w-10]
-                j+=1
-                plt.imshow(out)
-                plt.show()
-                #export rects
-                #cv2.imwrite('cropped\\' + fileName[i] + '_' + str(j) + '.jpg', out)
+            out = img[y+1:y+h-1,x+1:x+w-1]
+            
+            plt.imshow(out)
+            plt.show()
+            #export rects
+            #cv2.imwrite('cropped\\' + str(imgNum) + '.jpg', out)
+            #imgNum+=1
 
             
 
