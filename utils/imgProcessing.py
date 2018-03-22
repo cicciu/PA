@@ -27,6 +27,32 @@ def imgFilterCoutour(img):
     #apply a closing kernel to 'close' gaps between 'white'
     closed = cv2.morphologyEx(dilation, cv2.MORPH_CLOSE, kernel)
 
+
+    #show images
+    titles = ['imgray', 'imgBlur','img_thresh','edged']
+    #images = [img, img_thresh]
+
+    images = [imgray, imgBlur, img_thresh, edged]
+
+    for i in xrange(4):
+        plt.subplot(2,2,i+1),plt.imshow(images[i],'gray')
+        plt.title(titles[i])
+        plt.xticks([]),plt.yticks([])
+    plt.show()
+
+    #show images
+    titles = [ 'dilation', 'closed']
+    #images = [img, img_thresh]
+
+    images = [dilation, closed]
+
+    for i in xrange(2):
+        plt.subplot(2,2,i+1),plt.imshow(images[i],'gray')
+        plt.title(titles[i])
+        plt.xticks([]),plt.yticks([])
+    plt.show()
+
+
     return closed
 
 def rectImgDetect(img, li, col):
