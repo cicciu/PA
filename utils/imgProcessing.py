@@ -65,16 +65,15 @@ def rectImgDetect(img, li, col):
 
     newContoursRect=[]
     totalRectDetect = 0
-    # loop over the contours
+    # loop over the contours https://docs.opencv.org/3.1.0/dd/d49/tutorial_py_contour_features.html
     for c in contours:
         # approximate the contour 
-        peri = cv2.arcLength(c, True)
-        approx = cv2.approxPolyDP(c, 0.04 * peri, True) #0.02 default (inclinaison)
+        epsilon = 0.01*cv2.arcLength(c,True) #10% epsilon
+        approx = cv2.approxPolyDP(c,epsilon, True) 
         
-        # if the approximated contour has four points, then assume that the
-        # contour is a book -- a book is a rectangle and thus has four vertices
+        # if the approximated contour has four points, it is either a square or a rectangle (if 3:triangle)
         if len(approx) == 4:
-            cv2.drawContours(newImg, [approx], -1, (0, 255, 0), 4)
+            cv2.drawContours(newImg, [approx], -1, (0, 255, 0), 10) #4 = thickness
             newContoursRect.append(c)
             totalRectDetect += 1
 
@@ -84,7 +83,8 @@ def rectImgDetect(img, li, col):
 def exportRects(img, contours, li, col, minArea, minW, minH):
     imgNum = 0
     rects = [cv2.boundingRect(cnt) for cnt in contours]
-    rects = sorted(rects,key=lambda  x:x[1],reverse=True)
+    #sort order of rects (reverse false:Bottom-Up true:Up-Bottom )
+    rects = sorted(rects,key=lambda  x:x[1],reverse=False) 
 
     for rect in rects:
         x,y,w,h = rect
