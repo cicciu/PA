@@ -7,7 +7,7 @@ from skimage import io
 
 
 
-folder = "dataset"
+
 folder = ""
 
 
