@@ -28,3 +28,4 @@ __pycache__/
 *$py.class
 *.so
 test.py
+testset
