@@ -14,13 +14,15 @@ def imgFilterCoutour(img):
     imgBlur = cv2.medianBlur(imgray,5)
 
     #Treeshold of image
-    th, img_thresh = cv2.threshold(imgBlur, 180, 255, cv2.THRESH_BINARY) 
+    th, img_thresh = cv2.threshold(imgBlur, 195, 255, cv2.THRESH_BINARY) 
 
     # detect edged
-    edged = cv2.Canny(img_thresh, 180, 255) #first:threshold 1 second:threshold2
+    edged = cv2.Canny(img_thresh, 1, 255) #first:threshold 1 second:threshold2
 
     # construct kernel 
-    kernel = np.ones((4,4),np.uint8)
+    kernel =np.array([[0,0,1,1,0,0],[0,0,1,1,0,0],[1,1,1,1,1,1],[1,1,1,1,1,1],[0,0,1,1,0,0],[0,0,1,1,0,0]], np.uint8)
+
+    #kernel = np.ones((3,3),np.uint8)
     # thicken the edged (dilation)
     dilation = cv2.dilate(edged,kernel,iterations = 1)
 

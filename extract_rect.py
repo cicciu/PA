@@ -5,10 +5,23 @@ import math
 from utils.imgProcessing import *
 
             
-imageFile = "Images/G00368188.jpg"
-imageFile ="Images/G00009201.jpg"
+
+
+
+#imageFile ="Images/G00009201.jpg"
+#imageFile = "Images/G00305679.jpg"
+#imageFile = "Images/G00368188.jpg"
+#imageFile = "Images/G00400015.jpg"
+#imageFile = "Images/GDC004054_1.jpg"
+
 #imageFile = "Boiss/G00753100.tif"
 
+#imageFile= "testset/G00753210.jpg"
+#imageFile= "testset/G00753213.jpg"
+#imageFile= "testset/G00753214.jpg"
+#imageFile= "testset/G00753215.jpg"
+imageFile= "testset/G00753216.jpg"
+#imageFile= "testset/G00753217.jpg"
 
 
 #Read image
