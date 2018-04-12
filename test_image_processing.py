@@ -19,10 +19,11 @@ from utils.imgProcessing import *
 #imageFile= "testset/G00753210.jpg"
 #imageFile= "testset/G00753213.jpg"
 #imageFile= "testset/G00753214.jpg"
-#imageFile= "testset/G00753215.jpg"
-imageFile= "testset/G00753216.jpg"
-#imageFile= "testset/G00753217.jpg"
-
+imageFile= "testset/G00753215.jpg"
+#imageFile= "testset/G00753216.jpg"
+imageFile= "testset/G00753911.jpg"
+imageFile= "testset/G00753213.jpg"
+#imageFile = "testset/G00753220.jpg"
 
 #Read image
 img = cv2.imread(imageFile)
@@ -30,15 +31,16 @@ li = img.shape[0]
 col = img.shape[1]
 
 
-imgF = imgFilterCoutour(img)
+imgF = emptyRectFilter(img, flagPrint=True)
 
 plt.imshow(imgF)
 plt.show()
 
-
+"""
 rectIm, contoursR = rectImgDetect(imgF, li, col)
 
 plt.imshow(rectIm)
 plt.show()
 
 exportRects(img, contoursR, li, col, 10000, 100, 100)
+"""
