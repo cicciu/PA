@@ -88,10 +88,10 @@ def emptyRectFilter(img, flagPrint=False):
 
 
     #Remove salt and peper
-    imgBlur = cv2.medianBlur(imgray,7)
+    imgBlur = cv2.medianBlur(imgray,15)
 
     #Treeshold of image
-    th, img_thresh = cv2.threshold(imgBlur, 190, 255, cv2.THRESH_TOZERO) 
+    th, img_thresh = cv2.threshold(imgBlur, 80, 255, cv2.THRESH_BINARY) 
 
     if flagPrint:
         #show images
@@ -100,7 +100,7 @@ def emptyRectFilter(img, flagPrint=False):
 
         images = [imgray, imgBlur, img_thresh]
 
-        for i in xrange(4):
+        for i in xrange(3):
             plt.subplot(2,2,i+1),plt.imshow(images[i],'gray')
             plt.title(titles[i])
             plt.xticks([]),plt.yticks([])
