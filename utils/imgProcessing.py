@@ -5,16 +5,16 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def imgFilterCoutour(img):
+def imgFilterCoutour(img, flagPrint=False):
     #transgorm rgb to gray levelb
     imgray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) 
 
 
     #Remove salt and peper
-    imgBlur = cv2.medianBlur(imgray,5)
+    imgBlur = cv2.medianBlur(imgray,7)
 
     #Treeshold of image
-    th, img_thresh = cv2.threshold(imgBlur, 195, 255, cv2.THRESH_BINARY) 
+    th, img_thresh = cv2.threshold(imgBlur, 190, 255, cv2.THRESH_TOZERO) 
 
     # detect edged
     edged = cv2.Canny(img_thresh, 1, 255) #first:threshold 1 second:threshold2
@@ -29,33 +29,84 @@ def imgFilterCoutour(img):
     #apply a closing kernel to 'close' gaps between 'white'
     closed = cv2.morphologyEx(dilation, cv2.MORPH_CLOSE, kernel)
 
+    if flagPrint:
+        #show images
+        titles = ['imgray', 'imgBlur','img_thresh','edged']
+        #images = [img, img_thresh]
 
-    #show images
-    titles = ['imgray', 'imgBlur','img_thresh','edged']
-    #images = [img, img_thresh]
+        images = [imgray, imgBlur, img_thresh, edged]
 
-    images = [imgray, imgBlur, img_thresh, edged]
+        for i in xrange(4):
+            plt.subplot(2,2,i+1),plt.imshow(images[i],'gray')
+            plt.title(titles[i])
+            plt.xticks([]),plt.yticks([])
+        plt.show()
 
-    for i in xrange(4):
-        plt.subplot(2,2,i+1),plt.imshow(images[i],'gray')
-        plt.title(titles[i])
-        plt.xticks([]),plt.yticks([])
-    plt.show()
+        #show images
+        titles = [ 'dilation', 'closed']
+        #images = [img, img_thresh]
 
-    #show images
-    titles = [ 'dilation', 'closed']
-    #images = [img, img_thresh]
+        images = [dilation, closed]
 
-    images = [dilation, closed]
-
-    for i in xrange(2):
-        plt.subplot(2,2,i+1),plt.imshow(images[i],'gray')
-        plt.title(titles[i])
-        plt.xticks([]),plt.yticks([])
-    plt.show()
-
+        for i in xrange(2):
+            plt.subplot(2,2,i+1),plt.imshow(images[i],'gray')
+            plt.title(titles[i])
+            plt.xticks([]),plt.yticks([])
+        plt.show()
 
     return closed
+
+def treshFilter(img, flagPrint=False):
+    #transgorm rgb to gray levelb
+    imgray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) 
+
+
+    #Remove salt and peper
+    imgBlur = cv2.medianBlur(imgray,7)
+
+    #Treeshold of image
+    th, img_thresh = cv2.threshold(imgBlur, 190, 255, cv2.THRESH_TOZERO) 
+
+    if flagPrint:
+        #show images
+        titles = ['imgray', 'imgBlur','img_thresh']
+        #images = [img, img_thresh]
+
+        images = [imgray, imgBlur, img_thresh]
+
+        for i in xrange(4):
+            plt.subplot(2,2,i+1),plt.imshow(images[i],'gray')
+            plt.title(titles[i])
+            plt.xticks([]),plt.yticks([])
+        plt.show()
+
+    return img_thresh
+
+def emptyRectFilter(img, flagPrint=False):
+    #transgorm rgb to gray levelb
+    imgray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) 
+
+
+    #Remove salt and peper
+    imgBlur = cv2.medianBlur(imgray,7)
+
+    #Treeshold of image
+    th, img_thresh = cv2.threshold(imgBlur, 190, 255, cv2.THRESH_TOZERO) 
+
+    if flagPrint:
+        #show images
+        titles = ['imgray', 'imgBlur','img_thresh']
+        #images = [img, img_thresh]
+
+        images = [imgray, imgBlur, img_thresh]
+
+        for i in xrange(4):
+            plt.subplot(2,2,i+1),plt.imshow(images[i],'gray')
+            plt.title(titles[i])
+            plt.xticks([]),plt.yticks([])
+        plt.show()
+
+    return img_thresh
 
 def rectImgDetect(img, li, col):
     # find contours (i.e. the 'outlines') in the image and initialize the

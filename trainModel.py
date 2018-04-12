@@ -8,7 +8,7 @@ from skimage import io
 
 
 folder = "dataset"
-folder = "dataset_preprocess"
+folder = ""
 
 
 # create options for simple_detector
@@ -27,14 +27,14 @@ options.be_verbose = True
 
 
 #read path of xml
-training_xml_path = os.path.join(folder, "train_white_rect.xml")
+training_xml_path = os.path.join(folder, "train_white_rect_tresh.xml")
 
 # train model
-dlib.train_simple_object_detector(training_xml_path, "detect_white_rect.svm", options)
+dlib.train_simple_object_detector(training_xml_path, "detect_white_rect_tresh.svm", options)
 
 
 
 # It will print(the precision, recall, and then) average precision.
 print("") 
 print("Training accuracy: {}".format(
-    dlib.test_simple_object_detector(training_xml_path, "detect_white_rect.svm")))
+    dlib.test_simple_object_detector(training_xml_path, "detect_white_rect_tresh.svm")))
