@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<?xml-stylesheet type='text/xsl' href='image_metadata_stylesheet.xsl'?>
+<dataset>
+<name>imglab dataset</name>
+<comment>Created by imglab tool.</comment>
+<images>
+  <image file='/home/ciccius/Documents/PA/dataset_empty_rect/G00753092.jpg'>
+    <box top='126' left='1191' width='301' height='184'/>
+  </image>
+  <image file='/home/ciccius/Documents/PA/dataset_empty_rect/G00753102.jpg'>
+    <box top='156' left='216' width='316' height='187'/>
+  </image>
+  <image file='/home/ciccius/Documents/PA/dataset_empty_rect/G00753103.jpg'>
+    <box top='150' left='1143' width='298' height='181'/>
+  </image>
+  <image file='/home/ciccius/Documents/PA/dataset_empty_rect/G00753113.jpg'>
+    <box top='1950' left='171' width='328' height='250'/>
+  </image>
+  <image file='/home/ciccius/Documents/PA/dataset_empty_rect/G00753114.jpg'>
+    <box top='114' left='267' width='325' height='217'/>
+  </image>
+  <image file='/home/ciccius/Documents/PA/dataset_empty_rect/G00753115.jpg'>
+    <box top='1974' left='1053' width='337' height='229'/>
+  </image>
+  <image file='/home/ciccius/Documents/PA/dataset_empty_rect/G00753121.jpg'>
+    <box top='1977' left='327' width='418' height='277'/>
+  </image>
+  <image file='/home/ciccius/Documents/PA/dataset_empty_rect/G00753129.jpg'>
+    <box top='1926' left='1095' width='340' height='250'/>
+  </image>
+  <image file='/home/ciccius/Documents/PA/dataset_empty_rect/G00753135.jpg'>
+    <box top='1932' left='1074' width='373' height='220'/>
+  </image>
+  <image file='/home/ciccius/Documents/PA/dataset_empty_rect/G00753148.jpg'>
+    <box top='1515' left='1074' width='352' height='241'/>
+  </image>
+  <image file='/home/ciccius/Documents/PA/dataset_empty_rect/G00753154.jpg'>
+    <box top='132' left='1068' width='376' height='238'/>
+  </image>
+  <image file='/home/ciccius/Documents/PA/dataset_empty_rect/G00753155.jpg'>
+    <box top='126' left='186' width='331' height='214'/>
+  </image>
+  <image file='/home/ciccius/Documents/PA/dataset_empty_rect/G00753156.jpg'>
+    <box top='90' left='1107' width='328' height='217'/>
+  </image>
+  <image file='/home/ciccius/Documents/PA/dataset_empty_rect/G00753157.jpg'>
+    <box top='1929' left='1083' width='376' height='277'/>
+  </image>
+  <image file='/home/ciccius/Documents/PA/dataset_empty_rect/G00753826.jpg'>
+    <box top='1893' left='1050' width='349' height='238'/>
+  </image>
+  <image file='/home/ciccius/Documents/PA/dataset_empty_rect/G00753241.jpg'>
+    <box top='87' left='1218' width='310' height='208'/>
+  </image>
+  <image file='/home/ciccius/Documents/PA/dataset_empty_rect/G00753225.jpg'>
+    <box top='1857' left='1101' width='385' height='313'/>
+  </image>
+  <image file='/home/ciccius/Documents/PA/dataset_empty_rect/G00753272.jpg'>
+    <box top='1266' left='1080' width='400' height='277'/>
+  </image>
+</images>
+</dataset>
