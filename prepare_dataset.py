@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 
 
 folder_dataset = "datatrain"
-dirNewDataset = 'dataset_empty_rect'
+dirNewDataset = 'dataset_white_rect'
 
 if not os.path.exists(dirNewDataset):
     os.mkdir(dirNewDataset)
@@ -30,7 +30,7 @@ for f in glob.glob(os.path.join(folder_dataset, "*.jpg")):
     col = img.shape[1]
 
     #image processing
-    imgF = emptyRectFilter(img)
+    imgF = whiteRectFilter(img)
 
     #visualize
     """win.clear_overlay()

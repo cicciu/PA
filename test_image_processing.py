@@ -16,25 +16,35 @@ from utils.imgProcessing import *
 
 #imageFile = "Boiss/G00753100.tif"
 
-#imageFile= "testset/G00753210.jpg"
+imageFile= "testset/G00753210.jpg"
 #imageFile= "testset/G00753213.jpg"
 #imageFile= "testset/G00753214.jpg"
 imageFile= "testset/G00753215.jpg"
 #imageFile= "testset/G00753216.jpg"
-imageFile= "testset/G00753911.jpg"
-imageFile= "testset/G00753213.jpg"
+#imageFile= "testset/G00753911.jpg"
+imageFile= "testset/G00753213.jpg" #typus
 #imageFile = "testset/G00753220.jpg"
+imageFile = "testset/G00753876.jpg"
+imageFile = "testset/G00753826.jpg"
+#imageFile = "datatrain/G00753202.jpg"
 
 #Read image
 img = cv2.imread(imageFile)
+
+cv2.namedWindow("image", cv2.WINDOW_NORMAL)
+cv2.resizeWindow('image', 800,800)
 li = img.shape[0]
 col = img.shape[1]
 
 
-imgF = emptyRectFilter(img, flagPrint=True)
+#imgF = whiteRectFilter(img, flagPrint=True)
+imgF = whiteRectFilter(img, True)
 
-plt.imshow(imgF)
-plt.show()
+cv2.imshow('image',imgF)
+
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
 
 """
 rectIm, contoursR = rectImgDetect(imgF, li, col)
