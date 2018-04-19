@@ -110,25 +110,11 @@ def test(img,flagPrint=False):
         cv2.imshow("image", np.hstack([imgBlur, imgFilterWhite]))
         cv2.waitKey(0)
 
-    th, im_th = cv2.threshold(imgFilterWhite, 160, 255, cv2.THRESH_BINARY);
+    th, imTh = cv2.threshold(imgFilterWhite, 160, 255, cv2.THRESH_BINARY);
 
     if flagPrint:
-        cv2.imshow("image", np.hstack([img, im_th]))
+        cv2.imshow("image", np.hstack([img, imTh]))
         cv2.waitKey(0)
-
-
-    lower_yellow = np.array([255, 0, 255])  #GBR
-    upper_yellow = np.array([255,255, 255])  #GBR
-    
-
-    # create NumPy arrays from the boundaries
-    lower = np.array(lower_white, dtype = "uint8")
-    upper = np.array(upper_white, dtype = "uint8")
-
-    # find the colors within the specified boundaries and apply
-    # the mask
-    mask = cv2.inRange(im_th, lower, upper)
-    im_out = cv2.bitwise_and(im_th, im_th, mask = mask)
 
     return imgFilterWhite
 
