@@ -21,9 +21,10 @@ folderTestset = "testset"
 detector_tresh = dlib.simple_object_detector("detect_white_rect_tresh.svm") #
 detector_empty_rect = dlib.simple_object_detector("detect_empty_rect.svm")
 detector_bar_code = dlib.simple_object_detector("detect_bar_code.svm") 
+detector_typus_rect = dlib.simple_object_detector("detect_typus_rect.svm") 
 # We can look at the HOG filter we learned.  It should look like a rect.  Neat!
 """win_det = dlib.image_window()
-win_det.set_image(detector_tresh)"""
+win_det.set_image(detector_typus_rect)"""
 
 # Now let's run the detector over the images in the imagestmp folder and display the
 # results.
@@ -32,23 +33,29 @@ win = dlib.image_window()
 for f in glob.glob(os.path.join(folderTestset, "*.jpg")):
     print("Processing file: {}".format(f))
     img = io.imread(f)
+    imgCV2 = cv2.imread(f)
     li = img.shape[0]
     col = img.shape[1]
-
+    
+    
 
     
     
 
     #DETECT TRESH RECT
-    imgTreshFilter = treshFilter(img)
+    imgTreshFilter = treshFilter(imgCV2)
     dets_tresh = detector_tresh(imgTreshFilter)
 
     #DETECT EMPTY RECT
-    imgEmptyRectFilter= emptyRectFilter(img)
+    imgEmptyRectFilter= emptyRectFilter(imgCV2)
     dets_empty_rect = detector_empty_rect(imgEmptyRectFilter)
 
     #DETECT BAR CODE
-    dets_bar_code = detector_bar_code(img)
+    dets_bar_code = detector_bar_code(imgCV2)
+
+    #DETECT TYPUS RECT
+    imgTypusRectFilter = typusRectFilter(imgCV2)
+    dets_typus_rect = detector_typus_rect(imgTypusRectFilter)
 
     print("Number of tresh rect detected: {}".format(len(dets_tresh)))
     print("Number of empty rect detected: {}".format(len(dets_empty_rect)))
@@ -62,11 +69,11 @@ for f in glob.glob(os.path.join(folderTestset, "*.jpg")):
         plt.show()"""
     
 
-
     win.clear_overlay()
     win.set_image(img)
     #win.add_overlay(dets_tresh, dlib.rgb_pixel(255,255, 255))
     win.add_overlay(dets_empty_rect, dlib.rgb_pixel(0,0,0))
     win.add_overlay(dets_bar_code, dlib.rgb_pixel(255,255,255))
+    win.add_overlay(dets_typus_rect, dlib.rgb_pixel(255,0,0))
     dlib.hit_enter_to_continue()
 

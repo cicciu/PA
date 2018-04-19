@@ -108,6 +108,29 @@ def emptyRectFilter(img, flagPrint=False):
 
     return img_thresh
 
+def typusRectFilter(img, flagPrint=False):
+    # define the list of boundaries
+
+    lower_red = np.array([20, 40, 160])  #GBR
+    upper_red = np.array([80,100, 235])  #GBR
+    
+
+    # create NumPy arrays from the boundaries
+    lower = np.array(lower_red, dtype = "uint8")
+    upper = np.array(upper_red, dtype = "uint8")
+
+    # find the colors within the specified boundaries and apply
+    # the mask
+    mask = cv2.inRange(img, lower, upper)
+    img_filter_red = cv2.bitwise_and(img, img, mask = mask)
+
+    if flagPrint:
+        cv2.imshow("image", np.hstack([img, img_filter_red]))
+        cv2.waitKey(0)
+    
+        
+    return img_filter_red
+
 def rectImgDetect(img, li, col):
     # find contours (i.e. the 'outlines') in the image and initialize the
     # total number of books found
