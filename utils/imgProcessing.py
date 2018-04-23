@@ -89,11 +89,13 @@ def exportRects(img, dets, stringDets):
 
 
 def test(img,flagPrint=False):
+    li = img.shape[0]
+    col = img.shape[1]
     #Remove salt and peper
-    imgBlur = cv2.medianBlur(img,15)
+    img = cv2.medianBlur(img,7)
 
     # define the list of boundaries
-    lowerWhite = np.array([167, 160, 180])  #GBR
+    lowerWhite = np.array([165, 160, 170])  #GBR
     upperWhite = np.array([255,255, 255])  #GBR
     
 
@@ -103,20 +105,73 @@ def test(img,flagPrint=False):
 
     # find the colors within the specified boundaries and apply
     # the mask
-    mask = cv2.inRange(imgBlur, lower, upper)
-    imgFilterWhite = cv2.bitwise_and(imgBlur, imgBlur, mask = mask)
+    mask = cv2.inRange(img, lower, upper)
+    imgFilterWhite = cv2.bitwise_and(img, img, mask = mask)
+
+
+    # detect edged
+    edged = cv2.Canny(imgFilterWhite, 1, 30) #first:threshold 1 second:threshold2
+
+    # construct kernel 
+    kernel =np.array([[0,0,1,1,0,0],[0,0,1,1,0,0],[1,1,1,1,1,1],[1,1,1,1,1,1],[0,0,1,1,0,0],[0,0,1,1,0,0]], np.uint8)
+
+    #kernel = np.ones((3,3),np.uint8)
+    # thicken the edged (dilation)
+    dilation = cv2.dilate(edged,kernel,iterations = 1)
+
+    #apply a closing kernel to 'close' gaps between 'white'
+    closed = cv2.morphologyEx(dilation, cv2.MORPH_CLOSE, kernel)
 
     if flagPrint:
-        cv2.imshow("image", np.hstack([imgBlur, imgFilterWhite]))
+        cv2.imshow("image", img)
+        cv2.waitKey(0)
+        cv2.imshow("image",imgFilterWhite)
         cv2.waitKey(0)
 
-    th, imTh = cv2.threshold(imgFilterWhite, 160, 255, cv2.THRESH_BINARY);
+    return closed
+    
+def test2(img,flagPrint=False):
+    li = img.shape[0]
+    col = img.shape[1]
+    #Remove salt and peper
+    img = cv2.medianBlur(img,15)
+
+    # define the list of boundaries
+    lowerWhite = np.array([160, 160, 170])  #GBR
+    upperWhite = np.array([255,255, 255])  #GBR
+    
+
+    # create NumPy arrays from the boundaries
+    lower = np.array(lowerWhite, dtype = "uint8")
+    upper = np.array(upperWhite, dtype = "uint8")
+
+    # find the colors within the specified boundaries and apply
+    # the mask
+    mask = cv2.inRange(img, lower, upper)
+    imgFilterWhite = cv2.bitwise_and(img, img, mask = mask)
+
+
+    # detect edged
+    edged = cv2.Canny(imgFilterWhite, 15, 30) #first:threshold 1 second:threshold2
+
+    # construct kernel 
+    kernel =np.array([[0,1,0],
+                        [1,1,1],
+                        [0,1,0]], np.uint8)
+
+    #kernel = np.ones((3,3),np.uint8)
+    # thicken the edged (dilation)
+    dilation = cv2.dilate(edged,kernel,iterations = 1)
+
+    #apply a closing kernel to 'close' gaps between 'white'
+    closed = cv2.morphologyEx(dilation, cv2.MORPH_CLOSE, kernel)
 
     if flagPrint:
-        cv2.imshow("image", np.hstack([img, imTh]))
+        cv2.imshow("image", img)
         cv2.waitKey(0)
-
-    return imgFilterWhite
+        cv2.imshow("image",imgFilterWhite)
+        cv2.waitKey(0)
+    return closed
 
 
 

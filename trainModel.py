@@ -27,7 +27,7 @@ options.be_verbose = True
 
 
 #read path of xml
-training_xml_path = os.path.join(folder, "xml_files/train_typus_rect.xml")
+training_xml_path = os.path.join(folder, "xml_files/test.xml")
 
 # train model
 dlib.train_simple_object_detector(training_xml_path, "models/test.svm", options)

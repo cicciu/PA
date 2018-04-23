@@ -39,7 +39,6 @@ for f in glob.glob(os.path.join(folderTestset, "*.jpg")):
     #DETECT EMPTY RECT
     imgEmptyRectFilter= emptyRectFilter(imgCV2)
     dets_empty_rect = detector_empty_rect(imgEmptyRectFilter)
-    exportRects(img, dets_empty_rect, "empty rect")
 
     #DETECT BAR CODE
     dets_bar_code = detector_bar_code(imgCV2)
@@ -51,7 +50,7 @@ for f in glob.glob(os.path.join(folderTestset, "*.jpg")):
     #DETECT WHITE RECT
     imgWhiteRectFilter = whiteRectFilter(imgCV2)
     dets_white_rect = detector_white_rect(imgWhiteRectFilter)
-"""
+
     win.clear_overlay()
     win.set_image(img)
     win.add_overlay(dets_empty_rect, dlib.rgb_pixel(0,0,0))
@@ -59,6 +58,6 @@ for f in glob.glob(os.path.join(folderTestset, "*.jpg")):
     win.add_overlay(dets_typus_rect, dlib.rgb_pixel(255,0,0))
     win.add_overlay(dets_white_rect, dlib.rgb_pixel(255,255,0))
     dlib.hit_enter_to_continue()
-"""
+
     
 
