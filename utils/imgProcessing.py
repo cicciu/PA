@@ -8,31 +8,27 @@ import pytesseract
 
 SIZE_FACTOR = 3
 
-def emptyRectFilter(img, flagPrint=False):
+def empty_rect_filter(img, flagPrint=False):
     #transgorm rgb to gray levelb
-    imGray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) 
+    im_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) 
 
 
     #Remove salt and peper
-    imgBlur = cv2.medianBlur(imGray,15)
+    im_blur = cv2.medianBlur(im_gray,15)
 
     #Treeshold of image
-    th, imgThresh = cv2.threshold(imgBlur, 80, 255, cv2.THRESH_BINARY) 
+    th, im_th = cv2.threshold(im_blur, 80, 255, cv2.THRESH_BINARY) 
 
     if flagPrint:
         #show images
-        titles = ['imGray', 'imgBlur','imgThresh']
-        #images = [img, imgThresh]
+        cv2.imshow('Gray', im_gray)
+        cv2.imshow('Blur', im_blur)
+        cv2.imshow('Tresh', im_th)
 
-        images = [imGray, imgBlur, imgThresh]
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
 
-        for i in xrange(3):
-            plt.subplot(2,2,i+1),plt.imshow(images[i],'gray')
-            plt.title(titles[i])
-            plt.xticks([]),plt.yticks([])
-        plt.show()
-
-    return imgThresh
+    return im_th
 
 def whiteRectFilter(img, flagPrint=False):
 
@@ -120,46 +116,25 @@ def drawRects(img, dets, color, thickness):
 
 
 def test(img,flagPrint=False):
-    li = img.shape[0]
-    col = img.shape[1]
     #Remove salt and peper
     img = cv2.medianBlur(img,7)
 
     # define the list of boundaries
-    lowerWhite = np.array([165, 160, 170])  #GBR
-    upperWhite = np.array([255,255, 255])  #GBR
+    lowerBlack = np.array([0, 0, 0])  #GBR
+    upperBlack = np.array([159,125, 182])  #GBR
     
 
     # create NumPy arrays from the boundaries
-    lower = np.array(lowerWhite, dtype = "uint8")
-    upper = np.array(upperWhite, dtype = "uint8")
+    lower = np.array(lowerBlack, dtype = "uint8")
+    upper = np.array(upperBlack, dtype = "uint8")
 
     # find the colors within the specified boundaries and apply
     # the mask
     mask = cv2.inRange(img, lower, upper)
-    imgFilterWhite = cv2.bitwise_and(img, img, mask = mask)
+    img_filter_black = cv2.bitwise_and(img, img, mask = mask)
 
 
-    # detect edged
-    edged = cv2.Canny(imgFilterWhite, 1, 30) #first:threshold 1 second:threshold2
-
-    # construct kernel 
-    kernel =np.array([[0,0,1,1,0,0],[0,0,1,1,0,0],[1,1,1,1,1,1],[1,1,1,1,1,1],[0,0,1,1,0,0],[0,0,1,1,0,0]], np.uint8)
-
-    #kernel = np.ones((3,3),np.uint8)
-    # thicken the edged (dilation)
-    dilation = cv2.dilate(edged,kernel,iterations = 1)
-
-    #apply a closing kernel to 'close' gaps between 'white'
-    closed = cv2.morphologyEx(dilation, cv2.MORPH_CLOSE, kernel)
-
-    if flagPrint:
-        cv2.imshow("image", img)
-        cv2.waitKey(0)
-        cv2.imshow("image",imgFilterWhite)
-        cv2.waitKey(0)
-
-    return closed
+    return img_filter_black
 
 def rapport(img, flagPrint=False):
     #transgorm rgb to gray levelb
