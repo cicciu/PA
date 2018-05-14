@@ -1,9 +1,7 @@
 import os
 import sys
 import glob
-import pytesseract
 import dlib
-from PIL import Image
 from skimage import io
 import matplotlib.pyplot as plt
 
@@ -13,7 +11,8 @@ import math
 from utils.imgProcessing import *
 
 
-folderTestset = "testset"
+folderTestset = "data/testset"
+folderDataboiss = "data/databoiss"
 
 # Now let's use the detector as you would in a normal application.  First we
 # will load it from disk.
@@ -21,7 +20,7 @@ detector_empty_rect = dlib.simple_object_detector("models/detect_empty_rect.svm"
 detector_bar_code = dlib.simple_object_detector("models/detect_bar_code.svm") 
 detector_typus_rect = dlib.simple_object_detector("models/detect_typus_rect.svm")
 detector_white_rect = dlib.simple_object_detector("models/detect_white_rect.svm")
-detector_test = dlib.simple_object_detector("models/test.svm")  
+detector_test = dlib.simple_object_detector("models/rect_vertical.svm")  
 # We can look at the HOG filter we learned.  It should look like a rect.  Neat!
 """win_det = dlib.image_window()
 win_det.set_image(detector_typus_rect)"""
@@ -57,22 +56,23 @@ for f in glob.glob(os.path.join(folderTestset, "*.jpg")):
     dets_white_rect = detector_white_rect(imgWhiteRectFilter)
 
     #DETECT TEST
-    dets_test = detector_test(img_rescale)
+    dets_test = detector_test(imgCV2)
    
-    
-    im_with_rect = drawRects(img_rescale, dets_white_rect, (0,255,0),3)
+    #draw rect in image
+    im_with_rect = drawRects(imgCV2, dets_test, (0,255,0),3)
+    im_with_rect = drawRects(imgCV2, dets_empty_rect, (0,0,0),3)
         
+    #path of the big img (important because quality is better for the ocr) 
+    img_path = folderDataboiss+'/'+os.path.basename(f)
+
+    #get all image rectangle detect in imagefile
+    img_rects = exportRects(dets_test, img_path)
+
+    #texts = readTextsInRects(img_rects)
+
+    #print(texts)
+
+
     cv2.imshow('Detection(s) de rectangle(s)', im_with_rect)
     cv2.waitKey(0)
-
-    #read all rects detect in images
-    rects = exportRects(img, dets_white_rect, "white_rect")
-    for rect in rects:
-        img_rect = Image.fromarray(rect)
-        #ocr
-        text = pytesseract.image_to_string(img_rect)
-        print(text)
-
-
-    
 

@@ -3,6 +3,10 @@
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
+from PIL import Image
+import pytesseract
+
+SIZE_FACTOR = 3
 
 def emptyRectFilter(img, flagPrint=False):
     #transgorm rgb to gray levelb
@@ -75,26 +79,42 @@ def typusRectFilter(img, flagPrint=False):
         
     return imgFilterRed
 
-def exportRects(img, dets, stringDets, flagPrint=False):
+def exportRects(dets, img_path,flagPrint=False):
     out = []
+    img = cv2.imread(img_path)
     if flagPrint:    
-        print("Number of tresh " +stringDets + " rect detected: {}".format(len(dets)))
+        print("Number of rect detected: {}".format(len(dets)))
 
     for k, d in enumerate(dets):
-        rect_img = img[d.top()+1:d.top()+d.height()-1,d.left()+1:d.left()+d.width()-1]
+        #resize top height left width in function of image size
+        top = d.top()*SIZE_FACTOR
+        height = d.height()*SIZE_FACTOR
+        left = d.left()*SIZE_FACTOR
+        width = d.width()*SIZE_FACTOR
+
+        #read rect in img
+        rect_img = img[top:top+height,left:left+width]
+
         out.append(rect_img)
 
         if flagPrint:
-            print("Detection {}: Left: {} Top: {} Right: {} Bottom: {}".format(
-            k, d.left(), d.top(), d.right(), d.bottom()))
-            cv2.imshow('image', rect_img)
-            cv2.waitKey(0)
-            
+            print("Detection {}: Left: {} Top: {} Right: {} Bottom: {}".format(k, d.left(), d.top(), d.right(), d.bottom()))
+        cv2.imshow('Detection(s) de rectangle(s)', rect_img)
+        cv2.waitKey(0)
     return out
+
+def readTextsInRects(img_rects):
+    texts=[]
+    for img_rect in img_rects:
+        img_rect = Image.fromarray(img_rect)
+        #ocr
+        text = pytesseract.image_to_string(img_rect)
+        texts.append(text)
+    return texts
 
 def drawRects(img, dets, color, thickness):
     for k, d in enumerate(dets):
-        img = cv2.rectangle(img,(d.left()/3,d.top()/3), (d.right()/3,d.bottom()/3),color,thickness)
+        img = cv2.rectangle(img,(d.left(),d.top()), (d.right(),d.bottom()),color,thickness)
     return img
 
 
@@ -140,85 +160,6 @@ def test(img,flagPrint=False):
         cv2.waitKey(0)
 
     return closed
-    
-def test2(img,flagPrint=False):
-    li = img.shape[0]
-    col = img.shape[1]
-    #Remove salt and peper
-    img = cv2.medianBlur(img,15)
-
-    # define the list of boundaries
-    lowerWhite = np.array([160, 160, 170])  #GBR
-    upperWhite = np.array([255,255, 255])  #GBR
-    
-
-    # create NumPy arrays from the boundaries
-    lower = np.array(lowerWhite, dtype = "uint8")
-    upper = np.array(upperWhite, dtype = "uint8")
-
-    # find the colors within the specified boundaries and apply
-    # the mask
-    mask = cv2.inRange(img, lower, upper)
-    imgFilterWhite = cv2.bitwise_and(img, img, mask = mask)
-
-
-    # detect edged
-    edged = cv2.Canny(imgFilterWhite, 15, 30) #first:threshold 1 second:threshold2
-
-    # construct kernel 
-    kernel =np.array([[0,1,0],
-                        [1,1,1],
-                        [0,1,0]], np.uint8)
-
-    #kernel = np.ones((3,3),np.uint8)
-    # thicken the edged (dilation)
-    dilation = cv2.dilate(edged,kernel,iterations = 1)
-
-    #apply a closing kernel to 'close' gaps between 'white'
-    closed = cv2.morphologyEx(dilation, cv2.MORPH_CLOSE, kernel)
-
-    if flagPrint:
-        cv2.imshow("image", img)
-        cv2.waitKey(0)
-        cv2.imshow("image",imgFilterWhite)
-        cv2.waitKey(0)
-    return closed
-
-def test3(img, flagPrint=False):
-
-    #transgorm rgb to gray levelb
-    im_raw = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) 
-    #h, w =  im_raw.shape
-    #im_raw = cv2.resize(im_raw, (w/3, h/3)) 
-    
-
-    # Threshold
-    _, im_th1 = cv2.threshold(im_raw, 200, 250, cv2.THRESH_BINARY)
-    
-
-    # Erosion
-    kernel = np.ones((3,3), np.uint8)
-    im_erode = cv2.erode(im_th1, kernel, iterations=1)
-    
-
-    # Dilate
-    im_dilate = cv2.dilate(im_erode, kernel, iterations=3)
-    
-
-    # Canny
-    im_canny = cv2.Canny(im_dilate, 240, 250)
-    
-
-    if flagPrint:
-        cv2.imshow('Raw', im_raw)
-        cv2.imshow('Threshold 1', im_th1)
-        cv2.imshow('Erosion', im_erode)
-        cv2.imshow('dilate', im_dilate)
-        cv2.imshow('Canny', im_canny)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
-    
-    return im_dilate
 
 def rapport(img, flagPrint=False):
     #transgorm rgb to gray levelb

@@ -27,14 +27,14 @@ options.be_verbose = True
 
 
 #read path of xml
-training_xml_path = os.path.join(folder, "xml_files/test.xml")
+training_xml_path = os.path.join(folder, "xml_files/dataset_rect_vertical.xml")
 
 # train model
-dlib.train_simple_object_detector(training_xml_path, "models/test.svm", options)
+dlib.train_simple_object_detector("xml_files/dataset_rect_vertical.xml", "models/rect_vertical_dlt.svm", options)
 
 
 
 # It will print(the precision, recall, and then) average precision.
 print("") 
 print("Training accuracy: {}".format(
-    dlib.test_simple_object_detector(training_xml_path, "models/test.svm")))
+    dlib.test_simple_object_detector(training_xml_path, "models/rect_vertical.svm")))
