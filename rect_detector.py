@@ -11,13 +11,23 @@ from utils.imgProcessing import *
 import pyzbar.pyzbar as barcode
 import pylibdmtx.pylibdmtx as datamatrix
 
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+
 
 folderTestset = "data/testset"
 folderDataboiss = "data/databoiss"
 
 #First we will load detector from disk.
 detector_empty_rect = dlib.simple_object_detector("models/emptyrect.svm")
-detector_barcode = dlib.simple_object_detector("models/detect_bar_code.svm") 
+detector_barcode = dlib.simple_object_detector("models/barecoderect.svm") 
 detector_typus_rect = dlib.simple_object_detector("models/typusrect.svm")
 detector_verticalrect = dlib.simple_object_detector("models/rect_vertical.svm")  
 
@@ -60,24 +70,28 @@ for f in glob.glob(os.path.join(folderTestset, "*.jpg")):
     """READ BARCODE and QRCODE"""
     #get barcode image rectangle detect in imagefile (if we are detect barcode)
     if(len(dets_barcode)==1):
-        img_barcode = export_rects(dets_barcode, img_path, False)[0] 
+        img_barcode = export_rects(dets_barcode, img_path, False)[0]         
         img_barcode = Image.fromarray(img_barcode) #transform openCV img to PIL image
 
-        print img_path
         codevalue = barcode.decode(img_barcode)
+        #if the barcode return null result, maybe it's a datamatrix
         if codevalue == []:
-            print "OLALALALAL"
             codevalue =  datamatrix.decode(img_barcode)
-        print codevalue
+        if codevalue !=[]:
+            print bcolors.OKBLUE+"Barecode: "+str(codevalue) + bcolors.ENDC
+        else:
+            print bcolors.FAIL+"Barecode: Are not detected" + bcolors.ENDC
+        
     
     """OCR"""  
     #get all image rectangle detect in imagefile
-    #img_rects = export_rects(dets_verticalrect, img_path)
-
-    #texts = readtexts_in_rects(img_rects)
+    img_rects = export_rects(dets_verticalrect, img_path)
+    texts = readtexts_in_rects(img_rects)
 
     #print text detect
-    #print(texts)
-
+    if texts != []:
+        print bcolors.OKGREEN +"OCR value: "+str(texts) + bcolors.ENDC
+    else:
+        print bcolors.FAIL+"OCR value: Are not detected" + bcolors.ENDC
     
 
