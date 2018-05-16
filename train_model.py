@@ -5,11 +5,13 @@ import glob
 import dlib
 from skimage import io
 
+""" 
+Execute line example:
+python train_model.py xml_files/dataset_rect_vertical.xml models/rect_vertical_dlt.svm
+"""
 
-
-
-folder = ""
-
+path_xml_file = sys.argv[1]
+path_model = sys.argv[2]
 
 # create options for simple_detector
 options = dlib.simple_object_detector_training_options()
@@ -25,16 +27,11 @@ options.C = 5
 options.num_threads = 4
 options.be_verbose = True
 
-
-#read path of xml
-training_xml_path = os.path.join(folder, "xml_files/dataset_rect_vertical.xml")
-
 # train model
-dlib.train_simple_object_detector("xml_files/dataset_rect_vertical.xml", "models/rect_vertical_dlt.svm", options)
-
+dlib.train_simple_object_detector(path_xml_file, path_model, options)
 
 
 # It will print(the precision, recall, and then) average precision.
 print("") 
 print("Training accuracy: {}".format(
-    dlib.test_simple_object_detector(training_xml_path, "models/rect_vertical.svm")))
+    dlib.test_simple_object_detector(path_xml_file, path_model)))

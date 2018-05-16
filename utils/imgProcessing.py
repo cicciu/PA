@@ -8,7 +8,7 @@ import pytesseract
 
 SIZE_FACTOR = 3
 
-def empty_rect_filter(img, flagPrint=False):
+def emptyrect_filter(img, flagPrint=False):
     #transgorm rgb to gray levelb
     im_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) 
 
@@ -30,54 +30,42 @@ def empty_rect_filter(img, flagPrint=False):
 
     return im_th
 
-def whiteRectFilter(img, flagPrint=False):
-
+def typusrect_filter(img, flagPrint=False):
     # define the list of boundaries
-    lowerWhite = np.array([167, 160, 180])  #GBR
-    upperWhite = np.array([255,255, 255])  #GBR
+
+    lower_red = np.array([20, 40, 160])  #GBR
+    upper_red = np.array([100,120, 255])  #GBR
     
 
     # create NumPy arrays from the boundaries
-    lower = np.array(lowerWhite, dtype = "uint8")
-    upper = np.array(upperWhite, dtype = "uint8")
+    lower = np.array(lower_red, dtype = "uint8")
+    upper = np.array(upper_red, dtype = "uint8")
 
     # find the colors within the specified boundaries and apply
     # the mask
     mask = cv2.inRange(img, lower, upper)
-    imgFilterWhite = cv2.bitwise_and(img, img, mask = mask)
+    im_filter = cv2.bitwise_and(img, img, mask = mask)
+
+    # Erosion
+    kernel = np.ones((3,3), np.uint8)
+
+    # Dilate
+    im_dilate = cv2.dilate(im_filter, kernel, iterations=3)
 
     if flagPrint:
-        cv2.imshow("image", np.hstack([img, imgFilterWhite]))
+        cv2.imshow('Image', img)
+        cv2.imshow('Filter', im_filter)
+
         cv2.waitKey(0)
-
-    return imgFilterWhite
-
-def typusRectFilter(img, flagPrint=False):
-    # define the list of boundaries
-
-    lowerRed = np.array([20, 40, 160])  #GBR
-    upperRed = np.array([80,100, 235])  #GBR
-    
-
-    # create NumPy arrays from the boundaries
-    lower = np.array(lowerRed, dtype = "uint8")
-    upper = np.array(upperRed, dtype = "uint8")
-
-    # find the colors within the specified boundaries and apply
-    # the mask
-    mask = cv2.inRange(img, lower, upper)
-    imgFilterRed = cv2.bitwise_and(img, img, mask = mask)
-
-    if flagPrint:
-        cv2.imshow("image", np.hstack([img, imgFilterRed]))
-        cv2.waitKey(0)
+        cv2.destroyAllWindows()
     
         
-    return imgFilterRed
+    return im_dilate
 
-def exportRects(dets, img_path,flagPrint=False):
-    out = []
+def export_rects(dets, img_path,flagPrint=False):
+    arr_imgrect = []
     img = cv2.imread(img_path)
+
     if flagPrint:    
         print("Number of rect detected: {}".format(len(dets)))
 
@@ -88,18 +76,25 @@ def exportRects(dets, img_path,flagPrint=False):
         left = d.left()*SIZE_FACTOR
         width = d.width()*SIZE_FACTOR
 
+        #if detection are out of boxe
+        if left<0:
+            left = 0
+        if top<0:
+            top = 0
+
         #read rect in img
         rect_img = img[top:top+height,left:left+width]
 
-        out.append(rect_img)
+        arr_imgrect.append(rect_img)
 
         if flagPrint:
             print("Detection {}: Left: {} Top: {} Right: {} Bottom: {}".format(k, d.left(), d.top(), d.right(), d.bottom()))
-        cv2.imshow('Detection(s) de rectangle(s)', rect_img)
-        cv2.waitKey(0)
-    return out
+            cv2.imshow('Detection(s) de rectangle(s)', rect_img)
+            cv2.waitKey(0)
 
-def readTextsInRects(img_rects):
+    return arr_imgrect
+
+def readtexts_in_rects(img_rects):
     texts=[]
     for img_rect in img_rects:
         img_rect = Image.fromarray(img_rect)

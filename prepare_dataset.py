@@ -12,31 +12,23 @@ from skimage import io
 import matplotlib.pyplot as plt
 
 
-folder_dataset = "datatrain"
-dirNewDataset = 'dataset_white_rect'
+folder_dataset = "data/dataset_typusrect"
+dirNewDataset = "data/dataset_typusrect"
+
 
 if not os.path.exists(dirNewDataset):
     os.mkdir(dirNewDataset)
-
-
-# Now let's run the image proccesing 
-print("Showing images...")
+    
+#image proccesing 
 win = dlib.image_window()
 for f in glob.glob(os.path.join(folder_dataset, "*.jpg")):
     print("Processing file: {}".format(f))
     #Read image
     img = cv2.imread(f)
-    li = img.shape[0]
-    col = img.shape[1]
 
     #image processing
-    imgF = whiteRectFilter(img)
+    imgF = typusrect_filter(img)
 
-    #visualize
-    """win.clear_overlay()
-    win.set_image(imgF)
-    dlib.hit_enter_to_continue()"""
-
-    filename = os.path.basename(f)
     #export image
+    filename = os.path.basename(f)
     cv2.imwrite(os.path.join(dirNewDataset, filename), imgF) 

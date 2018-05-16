@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<?xml-stylesheet type='text/xsl' href='image_metadata_stylesheet.xsl'?>
+<dataset>
+<name>imglab dataset</name>
+<comment>Created by imglab tool.</comment>
+<images>
+  <image file='/home/ciccius/Documents/PA/data/dataset_typusrect/G00753213.jpg'>
+    <box top='630' left='347' width='113' height='70'/>
+  </image>
+  <image file='/home/ciccius/Documents/PA/data/dataset_typusrect/G00753270.jpg'>
+    <box top='477' left='136' width='113' height='70'/>
+  </image>
+  <image file='/home/ciccius/Documents/PA/data/dataset_typusrect/G00753876.jpg'>
+    <box top='470' left='251' width='118' height='85'/>
+  </image>
+  <image file='/home/ciccius/Documents/PA/data/dataset_typusrect/G00798928.jpg'>
+    <box top='4' left='148' width='133' height='68'/>
+  </image>
+</images>
+</dataset>
