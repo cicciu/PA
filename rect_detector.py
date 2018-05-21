@@ -10,6 +10,7 @@ import math
 from utils.imgProcessing import *
 import pyzbar.pyzbar as barcode
 import pylibdmtx.pylibdmtx as datamatrix
+import timeit
 
 class bcolors:
     HEADER = '\033[95m'
@@ -22,8 +23,10 @@ class bcolors:
     UNDERLINE = '\033[4m'
 
 
-folderTestset = "data/testset"
-folderDataboiss = "data/databoiss"
+folder_testset = "data/testset"
+folder_databoiss = "data/databoiss"
+display_flag = False
+images_process_times=[]
 
 #First we will load detector from disk.
 detector_empty_rect = dlib.simple_object_detector("models/emptyrect.svm")
@@ -31,12 +34,13 @@ detector_barcode = dlib.simple_object_detector("models/barecoderect.svm")
 detector_typus_rect = dlib.simple_object_detector("models/typusrect.svm")
 detector_verticalrect = dlib.simple_object_detector("models/rect_vertical.svm")  
 
-#Detector over the images in the imagestmp folder and OCR.
-print("Showing detections on the images in the testset folder...")
+start_time_program = timeit.default_timer()
 
-for f in glob.glob(os.path.join(folderTestset, "*.jpg")):
-    #image read
-    print("Processing file: {}".format(f))
+#Detector over the images in the imagestmp folder and OCR.
+print("Detections on the images in the "+folder_testset)
+for f in glob.glob(os.path.join(folder_testset, "*.jpg")):
+    start_image_process_time = timeit.default_timer()
+
     img = cv2.imread(f)
 
     """DETECTION AND DRAW"""
@@ -59,13 +63,8 @@ for f in glob.glob(os.path.join(folderTestset, "*.jpg")):
     dets_verticalrect = detector_verticalrect(img)
     im_with_rect = drawRects(img, dets_verticalrect, (0,255,0),3)  
 
-    #display image with the detection of rect
-    cv2.imshow('Detection(s) de rectangle(s)', im_with_rect)
-    cv2.waitKey(0)
-
-
     #path of the big img (important because quality is better for the ocr and barcode/qrcode reader)
-    img_path = folderDataboiss+'/'+os.path.basename(f)
+    img_path = folder_databoiss+'/'+os.path.basename(f)
 
     """READ BARCODE and QRCODE"""
     #get barcode image rectangle detect in imagefile (if we are detect barcode)
@@ -77,21 +76,44 @@ for f in glob.glob(os.path.join(folderTestset, "*.jpg")):
         #if the barcode return null result, maybe it's a datamatrix
         if codevalue == []:
             codevalue =  datamatrix.decode(img_barcode)
-        if codevalue !=[]:
-            print bcolors.OKBLUE+"Barecode: "+str(codevalue) + bcolors.ENDC
-        else:
-            print bcolors.FAIL+"Barecode: Are not detected" + bcolors.ENDC
+        
         
     
     """OCR"""  
     #get all image rectangle detect in imagefile
-    img_rects = export_rects(dets_verticalrect, img_path)
+    img_rects = export_rects(dets_verticalrect, img_path,True)
     texts = readtexts_in_rects(img_rects)
 
-    #print text detect
-    if texts != []:
-        print bcolors.OKGREEN +"OCR value: "+str(texts) + bcolors.ENDC
-    else:
-        print bcolors.FAIL+"OCR value: Are not detected" + bcolors.ENDC
+    stop_image_process_time = timeit.default_timer()
+
+    images_process_times.append(stop_image_process_time-start_image_process_time)
+    
+    #if you want to display info
+    if display_flag:
+        #image processing
+        print("Processing file: {}".format(f))
+
+        #display image with the detection of rect
+        cv2.imshow('Detection(s) de rectangle(s)', im_with_rect)
+        cv2.waitKey(0)
+
+        #print barcode
+        if codevalue !=[]:
+            print bcolors.OKBLUE+"Barecode: "+str(codevalue) + bcolors.ENDC
+        else:
+            print bcolors.FAIL+"Barecode: Are not detected" + bcolors.ENDC
+
+        #print text detect
+        if texts != []:
+            print bcolors.OKGREEN +"OCR value: "+str(texts) + bcolors.ENDC
+        else:
+            print bcolors.FAIL+"OCR value: Are not detected" + bcolors.ENDC
+
+
+stop_time_program = timeit.default_timer()
+program_execution_time = stop_time_program - start_time_program
+print "Program execution time: "+str(program_execution_time)+"\r\n" 
+print "Mean of image processing: " + str(np.mean(images_process_times))+"\r\n"
+print "Standard deviation of image processing: "+ str(np.std(images_process_times))+"\r\n"
     
 
