@@ -26,7 +26,7 @@ class bcolors:
 
 folder_testset = "data/testset"
 folder_databoiss = "data/databoiss"
-display_flag = True
+display_flag = False
 images_process_times=[]
 json_data={
     "images":[]
