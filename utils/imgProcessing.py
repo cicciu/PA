@@ -117,7 +117,7 @@ def export_rects(dets, img_path,flagPrint=False):
         #read rect in img
         rect_img = img[top:top+height,left:left+width]
 
-        arr_imgrect.append(rect_img)
+        arr_imgrect.append((rect_img, (top,height,left,width)))
 
         if flagPrint:
             print("Detection {}: Left: {} Top: {} Right: {} Bottom: {}".format(k, d.left(), d.top(), d.right(), d.bottom()))
@@ -126,10 +126,10 @@ def export_rects(dets, img_path,flagPrint=False):
 
     return arr_imgrect
 
-def readtexts_in_rects(img_rects):
+def readtexts_in_rects(rects):
     texts=[]
-    for img_rect in img_rects:
-        img_rect = Image.fromarray(img_rect)
+    for rect in rects:
+        img_rect = Image.fromarray(rect[0])
         #ocr
         text = pytesseract.image_to_string(img_rect)
         texts.append(text)
@@ -139,6 +139,41 @@ def drawRects(img, dets, color, thickness):
     for k, d in enumerate(dets):
         img = cv2.rectangle(img,(d.left(),d.top()), (d.right(),d.bottom()),color,thickness)
     return img
+def create_json_data(filename, rects, texts, codevalue, dets_typusrect, dets_empty_rect):
+
+    new_json_rects = []
+    i=0
+    for r in rects:
+        text = texts[i]
+        i=i+1
+        new_json_rects.append(
+            {
+                "text_recognition":text,
+                "coord":{
+                    "top":r[1][0],
+                    "height":r[1][1],
+                    "left":r[1][2],
+                    "width":r[1][3]
+                }
+            }
+        )
+    if codevalue == []:
+        codevalue_data = "NULL"
+    else:
+        codevalue_data = codevalue[0].data
+        
+    new_json_data = {
+            "name":filename,
+            "typus_rect":(len(dets_typusrect)==1),
+            "empty_rect":(len(dets_empty_rect)==1),
+            "barcode":{
+                    "decoded_value":codevalue_data
+                }
+                ,
+            "rectangles":new_json_rects
+    }
+
+    return new_json_data
 
 
 

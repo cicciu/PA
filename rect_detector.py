@@ -11,6 +11,7 @@ from utils.imgProcessing import *
 import pyzbar.pyzbar as barcode
 import pylibdmtx.pylibdmtx as datamatrix
 import timeit
+import json
 
 class bcolors:
     HEADER = '\033[95m'
@@ -25,8 +26,11 @@ class bcolors:
 
 folder_testset = "data/testset"
 folder_databoiss = "data/databoiss"
-display_flag = False
+display_flag = True
 images_process_times=[]
+json_data={
+    "images":[]
+}
 
 #First we will load detector from disk.
 detector_empty_rect = dlib.simple_object_detector("models/emptyrect.svm")
@@ -69,20 +73,20 @@ for f in glob.glob(os.path.join(folder_testset, "*.jpg")):
     """READ BARCODE and QRCODE"""
     #get barcode image rectangle detect in imagefile (if we are detect barcode)
     if(len(dets_barcode)==1):
-        img_barcode = export_rects(dets_barcode, img_path, False)[0]         
-        img_barcode = Image.fromarray(img_barcode) #transform openCV img to PIL image
+        rect_barcode = export_rects(dets_barcode, img_path, False)        
+        rect_barcode = Image.fromarray(rect_barcode[0][0]) #transform openCV img to PIL image
 
-        codevalue = barcode.decode(img_barcode)
+        codevalue = barcode.decode(rect_barcode)
         #if the barcode return null result, maybe it's a datamatrix
         if codevalue == []:
-            codevalue =  datamatrix.decode(img_barcode)
+            codevalue =  datamatrix.decode(rect_barcode)
         
         
     
     """OCR"""  
     #get all image rectangle detect in imagefile
-    img_rects = export_rects(dets_verticalrect, img_path,True)
-    texts = readtexts_in_rects(img_rects)
+    rects = export_rects(dets_verticalrect, img_path, False)
+    texts = readtexts_in_rects(rects)
 
     stop_image_process_time = timeit.default_timer()
 
@@ -108,6 +112,10 @@ for f in glob.glob(os.path.join(folder_testset, "*.jpg")):
             print bcolors.OKGREEN +"OCR value: "+str(texts) + bcolors.ENDC
         else:
             print bcolors.FAIL+"OCR value: Are not detected" + bcolors.ENDC
+    
+    #create json object
+    new_json_data = create_json_data(os.path.basename(f), rects, texts, codevalue, dets_typusrect, dets_empty_rect)
+    json_data["images"].append(new_json_data)
 
 
 stop_time_program = timeit.default_timer()
@@ -115,5 +123,8 @@ program_execution_time = stop_time_program - start_time_program
 print "Program execution time: "+str(program_execution_time)+"\r\n" 
 print "Mean of image processing: " + str(np.mean(images_process_times))+"\r\n"
 print "Standard deviation of image processing: "+ str(np.std(images_process_times))+"\r\n"
-    
+
+#write json file
+with open('data_json.json', 'w') as outfile:
+    json.dump(json_data, outfile)
 
