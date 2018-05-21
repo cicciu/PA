@@ -8,6 +8,38 @@ import pytesseract
 
 SIZE_FACTOR = 3
 
+def barecoderect_filter(img, flagPrint=False):
+    # define the list of boundaries
+    lower_withe = np.array([220, 220, 210])  #GBR
+    upper_withe = np.array([255,255, 255])  #GBR
+    
+
+    # create NumPy arrays from the boundaries
+    lower = np.array(lower_withe, dtype = "uint8")
+    upper = np.array(upper_withe, dtype = "uint8")
+
+    # find the colors within the specified boundaries and apply
+    # the mask
+    mask = cv2.inRange(img, lower, upper)
+    im_filter = cv2.bitwise_and(img, img, mask = mask)
+
+    # Erosion
+    kernel = np.ones((3,3), np.uint8)
+    im_erode = cv2.erode(im_filter, kernel, iterations=1)
+
+    # Dilate
+    im_dilate = cv2.dilate(im_erode, kernel, iterations=3)
+
+    if flagPrint:
+        cv2.imshow('Image', img)
+        cv2.imshow('Filter', im_filter)
+
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+    
+        
+    return im_dilate
+
 def emptyrect_filter(img, flagPrint=False):
     #transgorm rgb to gray levelb
     im_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) 
