@@ -135,7 +135,7 @@ def readtexts_in_rects(rects):
         texts.append(text)
     return texts
 
-def drawRects(img, dets, color, thickness):
+def draw_rects(img, dets, color, thickness):
     for k, d in enumerate(dets):
         img = cv2.rectangle(img,(d.left(),d.top()), (d.right(),d.bottom()),color,thickness)
     return img
@@ -206,57 +206,26 @@ def rapport(img, flagPrint=False):
     img = cv2.resize(img, (w/3, h/3)) 
     
 
-    # Threshold
-    _, im_th1 = cv2.threshold(im_raw, 200, 250, cv2.THRESH_BINARY)
-    
+    #transgorm rgb to gray levelb
+    im_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) 
 
-    # Erosion
-    kernel = np.ones((3,3), np.uint8)
-    im_erode = cv2.erode(im_th1, kernel, iterations=1)
-    
 
-    # Dilate
-    im_dilate = cv2.dilate(im_erode, kernel, iterations=3)
-    
+    #Remove salt and peper
+    im_blur = cv2.medianBlur(im_gray,15)
 
-    # Canny
-    im_canny = cv2.Canny(im_dilate, 240, 250)
-    
+    #Treeshold of image
+    th, im_th = cv2.threshold(im_blur, 80, 255, cv2.THRESH_BINARY) 
 
-    """if flagPrint:
-        cv2.imshow('Raw', im_raw)
-        cv2.imshow('Threshold 1', im_th1)
-        cv2.imshow('Erosion', im_erode)
-        cv2.imshow('dilate', im_dilate)
-        cv2.imshow('Canny', im_canny)
+    if flagPrint:
+        #show images
+        cv2.imshow('Gray', img)
+        cv2.imshow('Blur', im_blur)
+        cv2.imshow('Tresh', im_th)
+
         cv2.waitKey(0)
-        cv2.destroyAllWindows()"""
+        cv2.destroyAllWindows()
 
-        # find contours (i.e. the 'outlines') in the image and initialize the
-    # total number of books found
-    _ , contours, hierarchy = cv2.findContours(im_canny.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
-    img2 = img.copy()
-
-    newContoursRect=[]
-    totalRectDetect = 0
-    # loop over the contours https://docs.opencv.org/3.1.0/dd/d49/tutorial_py_contour_features.html
-    for c in contours:
-        # approximate the contour 
-        epsilon = 0.1*cv2.arcLength(c,True) #10% epsilon
-        approx = cv2.approxPolyDP(c,epsilon, True) 
-        
-        # if the approximated contour has four points, it is either a square or a rectangle (if 3:triangle)
-        if len(approx) == 4:
-            cv2.drawContours(img2, [approx], -1, (0, 255, 0), 3) #4 = thickness
-            newContoursRect.append(c)
-            totalRectDetect += 1
-
-    cv2.imshow("Resultat" , img2)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-    
-    return img
+    return im_th
 
 
 

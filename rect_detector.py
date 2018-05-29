@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import cv2
 import numpy as np
 import math
-from utils.imgProcessing import *
+from utils.img_processing import *
 import pyzbar.pyzbar as barcode
 import pylibdmtx.pylibdmtx as datamatrix
 import timeit
@@ -26,7 +26,7 @@ class bcolors:
 
 folder_testset = "data/testset"
 folder_databoiss = "data/databoiss"
-display_flag = False
+display_flag = True
 images_process_times=[]
 json_data={
     "images":[]
@@ -36,7 +36,7 @@ json_data={
 detector_empty_rect = dlib.simple_object_detector("models/emptyrect.svm")
 detector_barcode = dlib.simple_object_detector("models/barecoderect.svm") 
 detector_typus_rect = dlib.simple_object_detector("models/typusrect.svm")
-detector_verticalrect = dlib.simple_object_detector("models/rect_vertical.svm")  
+detector_horizontalrect = dlib.simple_object_detector("models/rect_horizontal.svm")  
 
 start_time_program = timeit.default_timer()
 
@@ -52,20 +52,20 @@ for f in glob.glob(os.path.join(folder_testset, "*.jpg")):
     #emptyrect
     im_emptyrect_filter= emptyrect_filter(img)
     dets_empty_rect = detector_empty_rect(im_emptyrect_filter)
-    im_with_rect = drawRects(img, dets_empty_rect, (0,0,0),3)
+    im_with_rect = draw_rects(img, dets_empty_rect, (0,0,0),3)
 
     #barcode
     dets_barcode = detector_barcode(img)
-    im_with_rect = drawRects(img, dets_barcode, (255,255,255), 3)
+    im_with_rect = draw_rects(img, dets_barcode, (255,255,255), 3)
 
     #typusrect
     im_typusrect_filter = typusrect_filter(img)
     dets_typusrect = detector_typus_rect(im_typusrect_filter)
-    im_with_rect = drawRects(img, dets_typusrect, (0,0,255),3)
+    im_with_rect = draw_rects(img, dets_typusrect, (0,0,255),3)
 
-    #verticalrect
-    dets_verticalrect = detector_verticalrect(img)
-    im_with_rect = drawRects(img, dets_verticalrect, (0,255,0),3)  
+    #horizontalrect
+    dets_horizontalrect = detector_horizontalrect(img)
+    im_with_rect = draw_rects(img, dets_horizontalrect, (0,255,0),3)  
 
     #path of the big img (important because quality is better for the ocr and barcode/qrcode reader)
     img_path = folder_databoiss+'/'+os.path.basename(f)
@@ -85,7 +85,7 @@ for f in glob.glob(os.path.join(folder_testset, "*.jpg")):
     
     """OCR"""  
     #get all image rectangle detect in imagefile
-    rects = export_rects(dets_verticalrect, img_path, False)
+    rects = export_rects(dets_horizontalrect, img_path, False)
     texts = readtexts_in_rects(rects)
 
     stop_image_process_time = timeit.default_timer()

@@ -2,7 +2,7 @@ import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 import math
-from utils.imgProcessing import *
+from utils.img_processing import *
 import os
 import sys
 import glob
